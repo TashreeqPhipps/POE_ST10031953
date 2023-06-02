@@ -47,5 +47,22 @@
         {
             Console.WriteLine("--------------------------------------------------------------");
         }
+
+        internal void ScaleRecipe(double scale)
+        {
+            for (int i = 0; i < Ingredients.Length; i++)
+            {
+                Ingredients[i].Quantity = Ingredients[i].Quantity * scale;
+            }
+        }
+
+        internal void ResetScale(double scale)
+        {
+            for (int i = 0; i < Ingredients.Length; i++)
+            {
+                Ingredients[i].Quantity = Ingredients[i].Quantity / scale;
+            }
+
+        }
     }
 }
