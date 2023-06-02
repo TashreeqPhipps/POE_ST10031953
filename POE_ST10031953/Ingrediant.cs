@@ -10,12 +10,5 @@
         {
             
         }
-
-        public Ingrediant(string name, double quantity, string unitOfMeasurement)
-        {
-            Name = name ?? throw new ArgumentNullException(nameof(name));
-            Quantity = quantity;
-            UnitOfMeasurement = unitOfMeasurement ?? throw new ArgumentNullException(nameof(unitOfMeasurement));
-        }
     }
 }

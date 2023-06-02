@@ -5,11 +5,6 @@
         public Ingrediant[] Ingredients { get; set; }
         public Step[] Steps { get; set; }
 
-        public Recipe()
-        {
-            
-        }
-
         public Recipe(int ingrediantsSize, int stepsSize)
         {
             Ingredients = new Ingrediant[ingrediantsSize];
