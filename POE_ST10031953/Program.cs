@@ -4,8 +4,94 @@
     {
         static void Main(string[] args)
         {
+            var recipes = new List<Recipe>();
+
+            AddRecipes(recipes);
+            // Display the list of recipes in alpahbetetical order
+            // Can select and display (Add scale and delete too)
+            // can exit from there
             while (true)
             {
+                Console.Clear();
+                Console.WriteLine("List of Recipies:");
+                recipes.OrderBy(x => x.Name);
+                for (int i = 0; i < recipes.Count; i++)
+                {
+                    Console.WriteLine(String.Format("{0}:\t{1}", i + 1, recipes[i].Name));
+                }
+                Console.WriteLine(@"Please enter a number to view or 'e' to exit or 'a' to add more recipes or 'r' to remove a recipe");
+
+                int selection;
+                var input = Console.ReadLine();
+                var isNumber = int.TryParse(input, out selection);
+                if (isNumber && (selection <= recipes.Count))
+                {
+                    recipes[selection].OutputString();
+                    continue;
+                }
+                else if (input.Trim().ToLower().Equals("e"))
+                {
+                    Console.WriteLine("Thank you for using our App, goodbye!");
+                    Delay();
+                    Environment.Exit(0);
+                }
+                else if (input.Trim().ToLower().Equals("a"))
+                {
+                    AddRecipes(recipes);
+                    continue;
+                }
+                else if (input.Trim().ToLower().Equals("r"))
+                {
+                    RemoveRecipe(recipes);
+                    continue;
+                }
+                else
+                {
+                    Console.Clear();
+                    Console.WriteLine("Please enter a valid input!");
+                    Delay();
+                    continue;
+                }
+            }
+        }
+
+        private static void RemoveRecipe(List<Recipe> recipes)
+        {
+            while(true)
+            {
+                try
+                {
+                    Console.WriteLine(string.Format("Please enter a number between 1 and {0} to remove", recipes.Count));
+                    var selection = int.Parse(Console.ReadLine());
+                    if (selection <= recipes.Count)
+                    {
+                        recipes.RemoveAt(selection - 1);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Please enter a number in the range!");
+                        continue;
+                    }
+                }
+                catch
+                {
+                    Console.WriteLine("Please enter a valid input!");
+                    continue;
+                }
+
+            }
+        }
+
+        private static void Delay()
+        {
+            Task.Delay(5000).Wait();
+        }
+
+        private static void AddRecipes(List<Recipe> recipes)
+        {
+            while (true)
+            {
+                Console.Clear();
                 Recipe recipe;
                 int ingredientSize;
                 int stepsSize;
@@ -14,63 +100,23 @@
                 GetAllIngredients(recipe, ingredientSize);
 
                 GetSteps(recipe, stepsSize);
+                recipes.Add(recipe);
 
                 recipe.OutputString();
-                Console.WriteLine("Would You like to scale up or down the recipe? (Y/N): ");
-                if (GetYesOrNo())
-                {
-                    double scale = ScaleThisRecipe(recipe);
-                    ResetRecipe(recipe, scale);
-                }
-                
+
                 Console.WriteLine("Would you like to clear the recipe and start again? (Y/N)");
                 if (GetYesOrNo())
                 {
+                    recipes.RemoveAt(recipes.Count - 1);
                     continue;
                 }
-                else
+                Console.WriteLine("Would you like to add another recipe? (Y/N)");
+                if (GetYesOrNo())
                 {
-                    Console.WriteLine("Thank you for using our App, goodbye!");
-                    Task.Delay(5000).Wait();
-                    Environment.Exit(0);
-                }
-                
-            }
-        }
-
-        private static void ResetRecipe(Recipe recipe, double scale)
-        {
-            Console.WriteLine("Would you like to reset the values? (Y/N)");
-            if (GetYesOrNo())
-            {
-                recipe.ResetScale(scale);
-                Console.WriteLine("RECIPE SCALE RESET!");
-                recipe.OutputString();
-            }
-        }
-
-        private static double ScaleThisRecipe(Recipe recipe)
-        {
-            double scale;
-            while (true)
-            {
-                try
-                {
-                    Console.WriteLine("What would you like to scale it to? (0.5 is half, 2 is double and 3 is triple): ");
-                    scale = double.Parse(Console.ReadLine().Replace(',', '.'));
-                }
-                catch
-                {
-                    Console.WriteLine("Please enter a valid number");
                     continue;
                 }
-
-                recipe.ScaleRecipe(scale);
-                recipe.OutputString();
                 break;
             }
-
-            return scale;
         }
 
         private static void GetSteps(Recipe recipe, int stepsSize)
@@ -117,13 +163,15 @@
         {
             while (true)
             {
+                Console.WriteLine("Please enter the Name of the recipe: ");
+                var name = Console.ReadLine();
                 try
                 {
                     Console.WriteLine("Please enter number of ingredients: ");
                     ingredientSize = int.Parse(Console.ReadLine());
                     Console.WriteLine("Please enter number of Steps: ");
                     stepsSize = int.Parse(Console.ReadLine());
-                    recipe = new Recipe(ingredientSize, stepsSize);
+                    recipe = new Recipe(name!, ingredientSize, stepsSize);
                 }
                 catch (Exception)
                 {

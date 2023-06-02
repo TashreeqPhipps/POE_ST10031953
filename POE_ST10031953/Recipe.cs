@@ -2,17 +2,21 @@
 {
     public class Recipe
     {
+        public string Name { get; set; }
         public Ingrediant[] Ingredients { get; set; }
         public Step[] Steps { get; set; }
 
-        public Recipe(int ingrediantsSize, int stepsSize)
+        public Recipe(string name, int ingrediantsSize, int stepsSize)
         {
+            Name = name;
             Ingredients = new Ingrediant[ingrediantsSize];
             Steps = new Step[stepsSize];
         }
 
         internal void OutputString()
         {
+            Console.WriteLine(Name.ToUpper());
+            WriteLine();
             Console.WriteLine("INGREDIENTS");
             WriteLine();
             for (int i = 0; i < Ingredients.Length; i++)
@@ -36,6 +40,55 @@
             }
 
             WriteLine();
+
+            Console.WriteLine("Would You like to scale up or down the recipe? (Y/N): ");
+            if (GetYesOrNo())
+            {
+                double scale = ScaleRecipe();
+                ResetRecipe(scale);
+            }
+
+        }
+
+        private double ScaleRecipe()
+        {
+            double scale;
+            while (true)
+            {
+                try
+                {
+                    Console.WriteLine("What would you like to scale it to? (0.5 is half, 2 is double and 3 is triple): ");
+                    scale = double.Parse(Console.ReadLine().Replace(',', '.'));
+                }
+                catch
+                {
+                    Console.WriteLine("Please enter a valid number");
+                    continue;
+                }
+
+                ScaleRecipeCalculations(scale);
+                OutputString();
+                break;
+            }
+
+            return scale;
+        }
+
+
+        private void ResetRecipe(double scale)
+        {
+            Console.WriteLine("Would you like to reset the values? (Y/N)");
+            if (GetYesOrNo())
+            {
+                ResetScaleCalculations(scale);
+                Console.WriteLine("RECIPE SCALE RESET!");
+                OutputString();
+            }
+        }
+
+        private bool GetYesOrNo()
+        {
+            return Console.ReadLine().ToLower().Trim().Equals("y");
         }
 
         private static void WriteLine()
@@ -43,7 +96,7 @@
             Console.WriteLine("--------------------------------------------------------------");
         }
 
-        internal void ScaleRecipe(double scale)
+        internal void ScaleRecipeCalculations(double scale)
         {
             for (int i = 0; i < Ingredients.Length; i++)
             {
@@ -51,7 +104,7 @@
             }
         }
 
-        internal void ResetScale(double scale)
+        internal void ResetScaleCalculations(double scale)
         {
             for (int i = 0; i < Ingredients.Length; i++)
             {
