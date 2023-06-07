@@ -3,42 +3,44 @@
     public class Recipe
     {
         public string Name { get; set; }
-        public Ingrediant[] Ingredients { get; set; }
-        public Step[] Steps { get; set; }
+        public List<Ingrediant> Ingredients { get; set; }
+        public List<Step> Steps { get; set; }
+        public int TotalCalories { get; set; }
 
-        public Recipe(string name, int ingrediantsSize, int stepsSize)
+        private delegate void CaloryAlerter();
+
+        public Recipe(string name)
         {
             Name = name;
-            Ingredients = new Ingrediant[ingrediantsSize];
-            Steps = new Step[stepsSize];
+            Ingredients = new List<Ingrediant>();
+            Steps = new List<Step>();
         }
 
         internal void OutputString()
         {
+            CaloryAlerter ca = new CaloryAlerter(CalorieAlert);
+            ca();
             Console.WriteLine(Name.ToUpper());
             WriteLine();
             Console.WriteLine("INGREDIENTS");
             WriteLine();
-            for (int i = 0; i < Ingredients.Length; i++)
+            for (int i = 0; i < Ingredients.Count; i++)
             {
-                Console.WriteLine("{0}:\t{1} {2} of {3}",
-                    i+1,
-                    Ingredients[i].Quantity,
-                    Ingredients[i].UnitOfMeasurement,
-                    Ingredients[i].Name);
+                Ingredients[i].OutputString(i + 1);
             }
 
             WriteLine();
             Console.WriteLine("STEPS");
             WriteLine();
 
-            for (int i = 0; i < Steps.Length; i++)
+            for (int i = 0; i < Steps.Count; i++)
             {
-                Console.WriteLine("Step {0}:\t{1}",
-                    Steps[i].Order,
-                    Steps[i].Description);
+                Steps[i].OutputString();
             }
 
+            WriteLine();
+
+            Console.WriteLine("TOTAL CALORIES: {0}", TotalCalories);
             WriteLine();
 
             Console.WriteLine("Would You like to scale up or down the recipe? (Y/N): ");
@@ -98,7 +100,7 @@
 
         internal void ScaleRecipeCalculations(double scale)
         {
-            for (int i = 0; i < Ingredients.Length; i++)
+            for (int i = 0; i < Ingredients.Count; i++)
             {
                 Ingredients[i].Quantity = Ingredients[i].Quantity * scale;
             }
@@ -106,11 +108,27 @@
 
         internal void ResetScaleCalculations(double scale)
         {
-            for (int i = 0; i < Ingredients.Length; i++)
+            for (int i = 0; i < Ingredients.Count; i++)
             {
                 Ingredients[i].Quantity = Ingredients[i].Quantity / scale;
             }
 
+        }
+
+        public void CalculateTotalCalories()
+        {
+            for (int i = 0; i < Ingredients.Count; i++)
+            {
+                TotalCalories += Ingredients[i].Calories;
+            }
+        }
+
+        internal void CalorieAlert()
+        {
+            if (TotalCalories > 300)
+            {
+                Console.WriteLine("The calories are over 300!!");
+            }
         }
     }
 }

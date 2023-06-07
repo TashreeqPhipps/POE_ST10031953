@@ -7,9 +7,6 @@
             var recipes = new List<Recipe>();
 
             AddRecipes(recipes);
-            // Display the list of recipes in alpahbetetical order
-            // Can select and display (Add scale and delete too)
-            // can exit from there
             while (true)
             {
                 Console.Clear();
@@ -57,13 +54,13 @@
 
         private static void RemoveRecipe(List<Recipe> recipes)
         {
-            while(true)
+            while (true)
             {
                 try
                 {
                     Console.WriteLine(string.Format("Please enter a number between 1 and {0} to remove", recipes.Count));
                     var selection = int.Parse(Console.ReadLine());
-                    if (selection <= recipes.Count)
+                    if (selection < recipes.Count)
                     {
                         recipes.RemoveAt(selection - 1);
                     }
@@ -93,13 +90,15 @@
             {
                 Console.Clear();
                 Recipe recipe;
-                int ingredientSize;
-                int stepsSize;
-                GetRecipeSizes(out recipe, out ingredientSize, out stepsSize);
 
-                GetAllIngredients(recipe, ingredientSize);
+                Console.WriteLine("Please enter the Name of the recipe: ");
+                recipe = new Recipe(Console.ReadLine()!);
 
-                GetSteps(recipe, stepsSize);
+
+                GetAllIngredients(recipe);
+
+                GetSteps(recipe);
+                recipe.CalculateTotalCalories();
                 recipes.Add(recipe);
 
                 recipe.OutputString();
@@ -119,35 +118,48 @@
             }
         }
 
-        private static void GetSteps(Recipe recipe, int stepsSize)
+        private static void GetSteps(Recipe recipe)
         {
-            for (int i = 0; i < stepsSize; i++)
+            int i = 1;
+            while (true)
             {
                 var step = new Step();
-                step.Order = i + 1;
+                step.Order = i;
                 Console.WriteLine("Please enter the description of step {0}: ", step.Order);
                 step.Description = Console.ReadLine();
-
-                recipe.Steps[i] = step;
+                recipe.Steps.Add(step);
+                i++;
             }
         }
 
-        private static void GetAllIngredients(Recipe recipe, int ingredientSize)
+        private static void GetAllIngredients(Recipe recipe)
         {
             while (true)
             {
-                for (int i = 0; i < ingredientSize; i++)
+                while (true)
                 {
                     var ingrediant = new Ingrediant();
                     try
                     {
-                        Console.WriteLine("Please enter Name of ingredient: ");
+                        Console.WriteLine("Please enter Name of the ingredient: ");
                         ingrediant.Name = Console.ReadLine();
-                        Console.WriteLine("Please enter the quantity of ingredient:");
+                        Console.WriteLine("Please enter the quantity of the ingredient:");
                         ingrediant.Quantity = int.Parse(Console.ReadLine());
-                        Console.WriteLine("Please enter the unit of measure of ingredient:");
+                        Console.WriteLine("Please enter the unit of measure of the ingredient:");
                         ingrediant.UnitOfMeasurement = Console.ReadLine();
-                        recipe.Ingredients[i] = ingrediant;
+                        Console.WriteLine("Please enter the calories of the ingredient:");
+                        ingrediant.Calories = int.Parse(Console.ReadLine());
+                        Console.WriteLine("Please enter the food group of the ingredient:");
+                        ingrediant.UnitOfMeasurement = Console.ReadLine();
+
+                        recipe.Ingredients.Add(ingrediant);
+                        Console.WriteLine("Is That all the ingredients? (Y/N)");
+                        ingrediant.UnitOfMeasurement = Console.ReadLine();
+                        if (GetYesOrNo())
+                        {
+                            break;
+                        }
+
                     }
                     catch (Exception)
                     {
@@ -155,30 +167,6 @@
                     }
                 }
                 Console.WriteLine("All Ingredients Entered!");
-                break;
-            }
-        }
-
-        private static void GetRecipeSizes(out Recipe recipe, out int ingredientSize, out int stepsSize)
-        {
-            while (true)
-            {
-                Console.WriteLine("Please enter the Name of the recipe: ");
-                var name = Console.ReadLine();
-                try
-                {
-                    Console.WriteLine("Please enter number of ingredients: ");
-                    ingredientSize = int.Parse(Console.ReadLine());
-                    Console.WriteLine("Please enter number of Steps: ");
-                    stepsSize = int.Parse(Console.ReadLine());
-                    recipe = new Recipe(name!, ingredientSize, stepsSize);
-                }
-                catch (Exception)
-                {
-                    Console.WriteLine("Please enter a valid input");
-                    continue;
-                }
-
                 break;
             }
         }
